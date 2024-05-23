@@ -1,85 +1,105 @@
-import React, { useState } from 'react';
-import useLocalStorage from './Localstorage'; // Import the custom hook for local storage
+import React, { useState, useEffect } from 'react';
+import { getAuth, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { fetchHistory, clearUserHistory } from './firestore';
+import { auth, provider } from './firebase';
+import Calculator from './calculator';
 import './App.css';
 
 function App() {
-  // State hooks for managing display, history, and history visibility
-  const [display, setDisplay] = useState('');
-  const [history, setHistory] = useLocalStorage('calculatorHistory', []); // Using custom hook for local storage
+  // State to hold the authenticated user information
+  const [user, setUser] = useState(null);
+  // State to hold the user's calculation history
+  const [history, setHistory] = useState([]);
+  // State to control the visibility of the history section
   const [showHistory, setShowHistory] = useState(true);
 
-  // Function to toggle visibility of history
+  // useEffect hook to set up the authentication state observer
+  useEffect(() => {
+    // Subscribe to auth state changes
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        // If the user is logged in, set the user state and fetch their history
+        setUser(currentUser);
+        const fetchedHistory = await fetchHistory(currentUser.uid);
+        setHistory(fetchedHistory);
+      } else {
+        // If the user is logged out, clear the user and history states
+        setUser(null);
+        setHistory([]);
+      }
+    });
+
+    // Cleanup the subscription on component unmount
+    return () => unsubscribe();
+  }, []);
+
+  // Function to handle Google sign-in
+  const handleSignIn = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // Set the user state to the authenticated user
+        setUser(result.user);
+      })
+      .catch((error) => {
+        // Log any errors that occur during sign-in
+        console.error(error);
+      });
+  };
+
+  // Function to handle sign-out
+  const handleSignOut = () => {
+    signOut(auth).then(() => {
+      // Clear the user and history states on sign-out
+      setUser(null);
+      setHistory([]);
+    }).catch((error) => {
+      // Log any errors that occur during sign-out
+      console.error(error);
+    });
+  };
+
+  // Function to toggle the visibility of the history section
   const toggleHistoryVisibility = () => {
     setShowHistory(prevShowHistory => !prevShowHistory);
   };
 
-  // Function to hide history
-  const hideHistory = () => {
-    setShowHistory(false);
-  };
-
-  // Function to append value to display
-  const appendToDisplay = value => {
-    setDisplay(prevDisplay => prevDisplay + value);
-  };
-
-  // Function to calculate and update display and history
-  const calculate = () => {
-    try {
-      const result = eval(display);
-      setHistory(prevHistory => [...prevHistory, `${display} = ${result}`]);
-      setDisplay(result.toString());
-    } catch (error) {
-      setDisplay('Error');
+  // Function to clear the user's calculation history
+  const clearHistory = async () => {
+    if (user) {
+      // Clear history from the database and update the state
+      await clearUserHistory(user.uid);
+      setHistory([]);
     }
-  };
-
-  // Function to clear display
-  const clearDisplay = () => {
-    setDisplay('');
   };
 
   return (
     <div className="container">
-      <h1>My React Calculator App</h1> 
-      {/* Button to toggle history visibility */}
-      <button className="toggle-history-button" onClick={toggleHistoryVisibility}>
-        {showHistory ? 'Hide History' : 'Show History'}
-      </button>
-      {/* Container for history */}
-      <div id="history-container" className={showHistory ? 'show' : 'hide'}>
-        <div id="history">
-          {/* Display history items */}
-          {history.map((item, index) => (
-            <div key={index}>{item}</div>
-          ))}
-        </div>
-      </div>
-      {/* Calculator container */}
-      <div id="calculator">
-        {/* Display input */}
-        <input id="display" readOnly value={display} />
-        {/* Calculator keys */}
-        <div id="keys">
-          <button onClick={() => appendToDisplay('+')} className="operator-btn">+</button>
-          <button onClick={() => appendToDisplay('7')}>7</button>
-          <button onClick={() => appendToDisplay('8')}>8</button>
-          <button onClick={() => appendToDisplay('9')}>9</button>
-          <button onClick={() => appendToDisplay('-')} className="operator-btn">-</button>
-          <button onClick={() => appendToDisplay('4')}>4</button>
-          <button onClick={() => appendToDisplay('5')}>5</button>
-          <button onClick={() => appendToDisplay('6')}>6</button>
-          <button onClick={() => appendToDisplay('*')} className="operator-btn">*</button>
-          <button onClick={() => appendToDisplay('1')}>1</button>
-          <button onClick={() => appendToDisplay('2')}>2</button>
-          <button onClick={() => appendToDisplay('3')}>3</button>
-          <button onClick={() => appendToDisplay('/')} className="operator-btn">/</button>
-          <button onClick={() => appendToDisplay('0')}>0</button>
-          <button onClick={() => appendToDisplay('.')}>.</button>
-          <button onClick={calculate}>=</button>
-          <button onClick={clearDisplay} className="operator-btn">C</button>
-        </div>
-      </div>
+      {user ? (
+        // If the user is authenticated, show the user info, history, and calculator
+        <>
+          <div className="user-info">
+            <img src={user.photoURL} alt="User profile" className="user-photo" />
+            <button onClick={handleSignOut}>Sign Out</button>
+          </div>
+          <button className="clear-history-button" onClick={clearHistory}>
+            Clear History
+          </button>
+          <button className="toggle-history-button" onClick={toggleHistoryVisibility}>
+            {showHistory ? 'Hide History' : 'Show History'}
+          </button>
+          <div id="history-container" className={showHistory ? 'show' : 'hide'}>
+            <div id="history">
+              {history.map((item, index) => (
+                <div key={index}>{item.expression} = {item.result}</div>
+              ))}
+            </div>
+          </div>
+          <Calculator userId={user.uid} updateHistory={(newHistory) => setHistory((prevHistory) => [...prevHistory, newHistory])} />
+        </>
+      ) : (
+        // If the user is not authenticated, show the sign-in button
+        <button onClick={handleSignIn}>Sign in with Google</button>
+      )}
     </div>
   );
 }

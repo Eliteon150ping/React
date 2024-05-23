@@ -1,0 +1,25 @@
+[debug] [2024-05-21T18:14:29.447Z] ----------------------------------------------------------------------
+[debug] [2024-05-21T18:14:29.450Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Rishen Surjoobhalee\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2024-05-21T18:14:29.451Z] CLI Version:   13.9.0
+[debug] [2024-05-21T18:14:29.451Z] Platform:      win32
+[debug] [2024-05-21T18:14:29.451Z] Node Version:  v20.12.0
+[debug] [2024-05-21T18:14:29.451Z] Time:          Tue May 21 2024 20:14:29 GMT+0200 (South Africa Standard Time)
+[debug] [2024-05-21T18:14:29.451Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-05-21T18:14:29.525Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-05-21T18:14:29.526Z] > authorizing via signed-in user (rishensurjoobhalee@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  D:\Bootcamp\React\my_source_code\Projects\expense_tracker_firebase
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
