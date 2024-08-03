@@ -1,0 +1,138 @@
+/* App.css */
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: bisque;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.user-photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.clear-history-button,
+.toggle-history-button {
+  margin-bottom: 10px;
+  background-color: turquoise;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.clear-history-button:hover,
+.toggle-history-button:hover {
+  background-color: hsl(174, 72%, 40%);
+}
+
+.clear-history-button:active,
+.toggle-history-button:active {
+  background-color: hsl(174, 72%, 50%);
+}
+
+#history-container {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+#history-container.show {
+  max-height: 200px;
+  /* Adjust the height as needed */
+}
+
+#history {
+  font-size: 1.2rem;
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 10px;
+  overflow-y: auto;
+}
+
+.hide {
+  display: none;
+}
+
+#calculator {
+  font-family: Arial, sans-serif;
+  background-color: hsla(176, 57%, 64%, 0.437);
+  border-radius: 15px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#display {
+  width: calc(100% - 40px);
+  padding: 20px;
+  font-size: 2.5rem;
+  text-align: right;
+  border: none;
+  background-color: hsl(340, 57%, 44%);
+  color: white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+#keys {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 20px;
+}
+
+button {
+  width: 100%;
+  padding: 20px;
+  border-radius: 10px;
+  border: none;
+  background-color: turquoise;
+  color: blueviolet;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: hsl(174, 72%, 40%);
+}
+
+button:active {
+  background-color: hsl(174, 72%, 50%);
+}
+
+.operator-btn {
+  background-color: hsl(238, 72%, 50%);
+}
+
+.operator-btn:hover {
+  background-color: hsl(238, 72%, 30%);
+}
+
+.operator-btn:active {
+  background-color: hsl(238, 72%, 40%);
+}
